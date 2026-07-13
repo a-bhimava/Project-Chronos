@@ -17,24 +17,23 @@ import { SentimentBadge } from "@/components/SentimentBadge";
 import { ShiftBadge } from "@/components/ShiftBadge";
 import { CitationList } from "@/components/Citation";
 import type { Topic } from "@/lib/types";
-import type { KolShift } from "@/lib/temporal/diff";
+import type { ActorShift } from "@/lib/temporal/diff";
 
 type CompareResponse = {
   entity: string;
   dateA: string;
   dateB: string;
   narrative: string;
-  kol_shifts: KolShift[];
+  shifts: ActorShift[];
   citations: string[];
 };
 
-export function TimelineCompare({ topics }: { topics: Topic[] }) {
+export function ComparePeriodsView({ topics }: { topics: Topic[] }) {
   const [entity, setEntity] = useState(topics[0]?.id ?? "");
-  // dateB defaults to today's date-equivalent in the seeded data range so a
-  // first-click "Compare" covers the real captured KOL activity window
-  // (roughly Feb-Jul 2026 for orforglipron) instead of stopping short of it.
-  const [dateA, setDateA] = useState("2026-01-15");
-  const [dateB, setDateB] = useState("2026-07-13");
+  // Defaults reflect real milestones in this corpus: pre-crisis baseline vs
+  // the S&P settlement date.
+  const [dateA, setDateA] = useState("2005-01-01");
+  const [dateB, setDateB] = useState("2015-02-03");
   const [result, setResult] = useState<CompareResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,15 +59,15 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="compare-entity">Drug</Label>
-          <Select value={entity} onValueChange={(value) => value && setEntity(value)}>
-            <SelectTrigger id="compare-entity" className="w-56">
+          <Label htmlFor="compare-entity">Entity</Label>
+          <Select value={entity} onValueChange={(v) => v && setEntity(v)}>
+            <SelectTrigger id="compare-entity" className="w-64">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {topics.map((t) => (
                 <SelectItem key={t.id} value={t.id}>
-                  {t.drug_name} ({t.company})
+                  {t.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -76,23 +75,11 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="compare-date-a">Date A</Label>
-          <Input
-            id="compare-date-a"
-            type="date"
-            value={dateA}
-            onChange={(e) => setDateA(e.target.value)}
-            className="w-40"
-          />
+          <Input id="compare-date-a" type="date" value={dateA} onChange={(e) => setDateA(e.target.value)} className="w-40" />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="compare-date-b">Date B</Label>
-          <Input
-            id="compare-date-b"
-            type="date"
-            value={dateB}
-            onChange={(e) => setDateB(e.target.value)}
-            className="w-40"
-          />
+          <Input id="compare-date-b" type="date" value={dateB} onChange={(e) => setDateB(e.target.value)} className="w-40" />
         </div>
         <Button onClick={handleCompare} disabled={loading || !entity}>
           {loading ? "Comparing…" : "Compare"}
@@ -100,7 +87,6 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
       </div>
 
       {error && <p className="text-sm text-status-critical">{error}</p>}
-
       {loading && (
         <div className="flex flex-col gap-3">
           <Skeleton className="h-16 w-full" />
@@ -118,11 +104,11 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
           </Card>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {result.kol_shifts.map((shift) => (
-              <Card key={shift.kol}>
+            {result.shifts.map((shift) => (
+              <Card key={shift.actor}>
                 <CardContent className="flex flex-col gap-2 pt-6">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-medium">{shift.kol}</span>
+                    <span className="font-medium">{shift.actor}</span>
                     <ShiftBadge kind={shift.kind} />
                   </div>
                   <div className="flex flex-col gap-2 text-sm">
@@ -132,9 +118,9 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
                 </CardContent>
               </Card>
             ))}
-            {result.kol_shifts.length === 0 && (
+            {result.shifts.length === 0 && (
               <p className="text-sm text-muted-foreground">
-                No KOL statements found for {result.entity} in the seeded data yet.
+                No named-actor statements found for {result.entity} in this period.
               </p>
             )}
           </div>
@@ -144,13 +130,7 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
   );
 }
 
-function StateRow({
-  label,
-  state,
-}: {
-  label: string;
-  state?: KolShift["stateA"];
-}) {
+function StateRow({ label, state }: { label: string; state?: ActorShift["stateA"] }) {
   if (!state) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground">

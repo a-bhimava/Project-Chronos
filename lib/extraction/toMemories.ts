@@ -56,7 +56,7 @@ export function buildCapturedContentMemory(opts: {
   const contentHash = `sha256:${createHash("sha256").update(opts.fullMarkdown).digest("hex")}`;
 
   const meta: ChronosMeta = {
-    entity: opts.topic.drug_name,
+    entity: opts.topic.name,
     predicate: "captured_content",
     observed_at: opts.capturedAt,
     date_confidence: "crawl_fallback",
@@ -73,7 +73,7 @@ export function buildCapturedContentMemory(opts: {
   };
 }
 
-/** Builds one memory per extracted KOL/company relation, citing the captured_content row's URL. */
+/** Builds one memory per extracted actor relation, citing the captured_content row's URL. */
 export function buildRelationMemories(opts: {
   relations: ExtractedRelation[];
   topic: Topic;
@@ -85,7 +85,7 @@ export function buildRelationMemories(opts: {
   return opts.relations.map((relation) => {
     const statementText = truncateStatement(relation.statement_text);
     const meta: ChronosMeta = {
-      kol: relation.kol,
+      actor: relation.actor,
       entity: relation.entity,
       predicate: relation.predicate,
       observed_at: opts.observed.observed_at,
@@ -100,7 +100,7 @@ export function buildRelationMemories(opts: {
       hydra_doc_source: opts.sourceUrl,
     };
 
-    const who = relation.kol ?? `${opts.topic.company} (official)`;
+    const who = relation.actor ?? `${opts.topic.org} (unattributed)`;
     const sentence = `${who} ${relation.predicate.replace(/_/g, " ")} ${relation.entity}: "${statementText}"`;
 
     return { text: buildMemoryText(sentence, meta), meta };

@@ -38,15 +38,16 @@ export function stripMeta(text: string): string {
 }
 
 /**
- * The same KOL shows up across articles with inconsistent credential
- * suffixes ("Natalie Bellini, DNP" vs "Natalie Bellini") since extraction
- * transcribes whatever a given source wrote. Grouping by the raw string
- * fragments one person's timeline into several. Use this as the grouping
- * key everywhere a KOL identity matters (stateAsOf, domino) — keep the
- * display name as-is, just don't key on it directly.
+ * The same actor shows up across articles with inconsistent suffixes
+ * ("Standard & Poor's Financial Services LLC" vs "S&P", "Frank Raiter, MD"
+ * vs "Frank Raiter") since extraction transcribes whatever a given source
+ * wrote. Grouping by the raw string fragments one actor's timeline into
+ * several. Use this as the grouping key everywhere actor identity matters
+ * (stateAsOf, domino) — keep the display name as-is, just don't key on it
+ * directly.
  */
-export function normalizeKolKey(kol: string): string {
-  return kol.split(",")[0].trim().toLowerCase();
+export function normalizeActorKey(actor: string): string {
+  return actor.split(",")[0].trim().toLowerCase();
 }
 
 /** Builds the raw text we hand to HydraDB: a natural-language sentence (for

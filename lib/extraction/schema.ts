@@ -3,13 +3,13 @@ import { z } from "zod";
 export const ExtractionSchema = z.object({
   relations: z.array(
     z.object({
-      kol: z
+      actor: z
         .string()
         .nullable()
         .describe(
-          "Full name of the doctor/researcher/KOL making the statement, exactly as written in the source. Null if the statement is from a company/spokesperson, not an individual.",
+          "Who made the statement, exactly as named in the source — a named individual (e.g. 'Frank Raiter'), or an institution/organization when the statement is institutional rather than an individual's (e.g. 'Department of Justice', 'S&P', 'Moody's Investors Service'). Null only if no identifiable speaker can be determined.",
         ),
-      entity: z.string().describe("The drug, brand name, or company being discussed"),
+      entity: z.string().describe("The subject the statement is about — e.g. a ratings methodology, a settlement, a specific security class"),
       predicate: z.enum([
         "supports",
         "criticizes",

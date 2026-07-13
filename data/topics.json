@@ -1,43 +1,31 @@
 {
   "topics": [
     {
-      "id": "orforglipron",
-      "drug_name": "Orforglipron",
-      "brand_name": "Foundayo",
-      "company": "Eli Lilly",
-      "class": "oral GLP-1 (obesity)",
+      "id": "sp",
+      "name": "S&P RMBS/CDO Ratings",
+      "org": "Standard & Poor's Financial Services LLC (S&P Global, formerly McGraw Hill Financial)",
+      "category": "credit rating settlement",
       "queries": [
-        "orforglipron FDA decision",
-        "orforglipron Foundayo approval reaction",
-        "orforglipron Phase 3 trial results doctors reaction",
-        "Eli Lilly orforglipron obesity medicine specialist opinion",
-        "site:twitter.com OR site:x.com orforglipron",
-        "orforglipron side effects concerns"
+        "S&P DOJ settlement 1.375 billion RMBS CDO fraud investors 2015",
+        "site:justice.gov S&P settlement defrauding investors",
+        "S&P subprime RMBS rating methodology credit enhancement 2004 2005 2006",
+        "S&P Frank Raiter testimony ratings model delayed subprime",
+        "McGraw Hill S&P CalPERS settlement 2015",
+        "S&P AAA rated CDO downgraded junk 2008 financial crisis statistics"
       ]
     },
     {
-      "id": "danuglipron",
-      "drug_name": "Danuglipron",
-      "company": "Pfizer",
-      "class": "oral GLP-1 (obesity)",
+      "id": "moodys",
+      "name": "Moody's RMBS/CDO Ratings",
+      "org": "Moody's Investors Service, Inc. and Moody's Analytics, Inc. (Moody's Corporation)",
+      "category": "credit rating settlement",
       "queries": [
-        "danuglipron discontinued liver injury",
-        "Pfizer danuglipron obesity pill safety",
-        "danuglipron doctors reaction discontinuation",
-        "Pfizer GLP-1 setback obesity pipeline",
-        "site:twitter.com OR site:x.com danuglipron"
-      ]
-    },
-    {
-      "id": "oral-semaglutide",
-      "drug_name": "Oral semaglutide",
-      "brand_name": "Rybelsus / Wegovy oral",
-      "company": "Novo Nordisk",
-      "class": "oral GLP-1 (obesity)",
-      "queries": [
-        "Novo Nordisk oral semaglutide obesity 2026",
-        "Rybelsus Wegovy pill competition orforglipron",
-        "oral semaglutide doctors reaction 2026"
+        "Moody's DOJ settlement 864 million RMBS CDO 2017",
+        "site:justice.gov Moody's settlement structured finance ratings",
+        "Moody's subordination levels subprime RMBS methodology 2004 2005 2006",
+        "Moody's Arturo Cifuentes testimony ratings conflict of interest issuer pays",
+        "Moody's Corporation states attorneys general settlement 2017 investor relations",
+        "Moody's AAA rated MBS downgraded junk 2010 FCIC report statistics"
       ]
     }
   ]

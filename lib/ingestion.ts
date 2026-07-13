@@ -29,9 +29,14 @@ export async function runIngestForQuery(
 ): Promise<IngestQueryResult> {
   const capturedAt = new Date().toISOString();
 
+  // No freshness default: this corpus is historical (2003-2017 primary
+  // sources). A "month"-style recency default — right for live pharma news
+  // — would silently filter out every real document we actually need.
+  // Callers that DO want a recency/date-range filter pass options.freshness
+  // explicitly.
   const searchRes = await youComSearch(query, {
     count: options.count ?? 10,
-    freshness: options.freshness ?? "month",
+    ...(options.freshness ? { freshness: options.freshness } : {}),
   });
   const webResults = searchRes.results.web ?? [];
   const topResults = webResults.slice(0, 5);

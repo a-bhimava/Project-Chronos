@@ -33,7 +33,7 @@ async function main() {
   let totalIngested = 0;
 
   for (const topic of topics) {
-    console.log(`\n=== ${topic.drug_name} (${topic.company}) ===`);
+    console.log(`\n=== ${topic.name} (${topic.org}) ===`);
     for (const query of topic.queries) {
       process.stdout.write(`  "${query}" ... `);
       try {

@@ -1,4 +1,4 @@
-import type { KolState } from "@/lib/temporal/stateAsOf";
+import type { ActorState } from "@/lib/temporal/stateAsOf";
 
 export type ShiftKind =
   | "shifted_negative"
@@ -7,11 +7,11 @@ export type ShiftKind =
   | "new_mention"
   | "went_silent";
 
-export type KolShift = {
-  kol: string;
+export type ActorShift = {
+  actor: string;
   kind: ShiftKind;
-  stateA?: KolState;
-  stateB?: KolState;
+  stateA?: ActorState;
+  stateB?: ActorState;
 };
 
 /** Sentiment scores within this margin of each other count as "unchanged". */
@@ -19,47 +19,47 @@ const SHIFT_THRESHOLD = 0.15;
 
 /**
  * Diffs two point-in-time states (from stateAsOf) for the same entity and
- * classifies every KOL who appears in either snapshot.
+ * classifies every actor who appears in either snapshot.
  */
 export function diff(
-  stateA: Map<string, KolState>,
-  stateB: Map<string, KolState>,
-): KolShift[] {
-  const allKols = new Set<string>([...stateA.keys(), ...stateB.keys()]);
-  const shifts: KolShift[] = [];
+  stateA: Map<string, ActorState>,
+  stateB: Map<string, ActorState>,
+): ActorShift[] {
+  const allActors = new Set<string>([...stateA.keys(), ...stateB.keys()]);
+  const shifts: ActorShift[] = [];
 
-  for (const key of allKols) {
+  for (const key of allActors) {
     const a = stateA.get(key);
     const b = stateB.get(key);
-    // Map keys are normalizeKolKey()'d (lowercase, credential-stripped) for
-    // grouping — always display the KolState's own `.kol`, never the key.
-    const kol = (a ?? b)!.kol;
+    // Map keys are normalizeActorKey()'d (lowercase, suffix-stripped) for
+    // grouping — always display the ActorState's own `.actor`, never the key.
+    const actor = (a ?? b)!.actor;
 
     if (!a && b) {
-      shifts.push({ kol, kind: "new_mention", stateB: b });
+      shifts.push({ actor, kind: "new_mention", stateB: b });
       continue;
     }
     if (a && !b) {
-      shifts.push({ kol, kind: "went_silent", stateA: a });
+      shifts.push({ actor, kind: "went_silent", stateA: a });
       continue;
     }
     if (a && b) {
       // stateAsOf carries the latest known statement forward indefinitely,
-      // so presence in both snapshots is guaranteed once a KOL has spoken —
-      // it does NOT mean they're still active. If B's statement is the exact
-      // same one as A's (same observed_at), no fresh signal arrived in the
-      // window: that's "went_silent", not "unchanged".
+      // so presence in both snapshots is guaranteed once an actor has spoken
+      // — it does NOT mean they're still active. If B's statement is the
+      // exact same one as A's (same observed_at), no fresh signal arrived in
+      // the window: that's "went_silent", not "unchanged".
       if (b.observed_at === a.observed_at) {
-        shifts.push({ kol, kind: "went_silent", stateA: a, stateB: b });
+        shifts.push({ actor, kind: "went_silent", stateA: a, stateB: b });
         continue;
       }
       const delta = b.sentiment_score - a.sentiment_score;
       let kind: ShiftKind = "unchanged";
       if (delta <= -SHIFT_THRESHOLD) kind = "shifted_negative";
       else if (delta >= SHIFT_THRESHOLD) kind = "shifted_positive";
-      shifts.push({ kol, kind, stateA: a, stateB: b });
+      shifts.push({ actor, kind, stateA: a, stateB: b });
     }
   }
 
-  return shifts.sort((x, y) => x.kol.localeCompare(y.kol));
+  return shifts.sort((x, y) => x.actor.localeCompare(y.actor));
 }

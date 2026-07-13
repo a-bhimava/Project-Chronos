@@ -5,25 +5,25 @@ import type { ChronosMeta } from "@/lib/types";
 describe("parseMemoryText / buildMemoryText", () => {
   it("round-trips a memory built with buildMemoryText", () => {
     const meta: ChronosMeta = {
-      kol: "Dr. Jane Smith",
-      entity: "Orforglipron",
-      predicate: "supports",
-      observed_at: "2026-04-02T00:00:00Z",
+      actor: "Department of Justice",
+      entity: "S&P RMBS/CDO ratings",
+      predicate: "criticizes",
+      observed_at: "2015-02-03T00:00:00Z",
       date_confidence: "exact",
-      sentiment: "positive",
-      sentiment_score: 0.8,
-      source_url: "https://x.com/janesmith/1",
-      topic_id: "orforglipron",
+      sentiment: "negative",
+      sentiment_score: -0.8,
+      source_url: "https://www.justice.gov/archives/opa/pr/justice-department-and-state-partners-secure-1375-billion-settlement-sp-defrauding-investors",
+      topic_id: "sp",
       captured_at: "2026-07-13T00:00:00Z",
     };
-    const sentence = "Dr. Jane Smith called the results promising.";
+    const sentence = "DOJ alleged S&P misrepresented its ratings as objective and independent.";
     const text = buildMemoryText(sentence, meta);
 
     const parsed = parseMemoryText(text);
     expect(parsed).not.toBeNull();
-    expect(parsed!.meta.observed_at).toBe("2026-04-02T00:00:00Z");
-    expect(parsed!.meta.sentiment).toBe("positive");
-    expect(parsed!.meta.kol).toBe("Dr. Jane Smith");
+    expect(parsed!.meta.observed_at).toBe("2015-02-03T00:00:00Z");
+    expect(parsed!.meta.sentiment).toBe("negative");
+    expect(parsed!.meta.actor).toBe("Department of Justice");
     expect(parsed!.statement).toBe(sentence);
   });
 
@@ -36,11 +36,11 @@ describe("parseMemoryText / buildMemoryText", () => {
   });
 
   it("returns null when required fields are missing from META", () => {
-    expect(parseMemoryText('hello [[META:{"observed_at":"2026-01-01T00:00:00Z"}]]')).toBeNull();
+    expect(parseMemoryText('hello [[META:{"observed_at":"2015-02-03T00:00:00Z"}]]')).toBeNull();
   });
 
   it("strips the META block for display", () => {
-    const text = 'Hello world. [[META:{"observed_at":"2026-01-01T00:00:00Z","entity":"x"}]]';
+    const text = 'Hello world. [[META:{"observed_at":"2015-02-03T00:00:00Z","entity":"x"}]]';
     expect(stripMeta(text)).toBe("Hello world.");
   });
 });

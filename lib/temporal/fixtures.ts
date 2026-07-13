@@ -2,7 +2,7 @@ import type { ParsedMemory, Predicate, Sentiment } from "@/lib/types";
 
 /** Test helper: builds a ParsedMemory without needing to round-trip through parse.ts. */
 export function fixture(opts: {
-  kol: string;
+  actor: string;
   entity: string;
   sentiment: Sentiment;
   sentiment_score: number;
@@ -11,13 +11,13 @@ export function fixture(opts: {
   source_url?: string;
   predicate?: Predicate;
 }): ParsedMemory {
-  const statement = opts.statement_text ?? `${opts.kol} on ${opts.entity}`;
-  const source_url = opts.source_url ?? `https://example.com/${opts.kol.replace(/\s+/g, "-")}`;
+  const statement = opts.statement_text ?? `${opts.actor} on ${opts.entity}`;
+  const source_url = opts.source_url ?? `https://example.com/${opts.actor.replace(/\s+/g, "-")}`;
   return {
     text: statement,
     statement,
     meta: {
-      kol: opts.kol,
+      actor: opts.actor,
       entity: opts.entity,
       predicate: opts.predicate ?? "mentions",
       observed_at: opts.observed_at,

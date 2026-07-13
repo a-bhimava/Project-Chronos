@@ -19,19 +19,28 @@ export async function GET(req: NextRequest) {
   }
 
   const topic = getTopic(entityId);
-  const entityName = topic?.drug_name ?? entityId;
+  const entityName = topic?.name ?? entityId;
 
   // Biasing the query toward individual-statement language, not just the
-  // bare drug name, matters: a plain entity-name query ranks large official
-  // announcement/report documents (kol: null) ahead of the shorter named-KOL
-  // statement memories stateAsOf/diff actually need, since HydraDB's hybrid
-  // search has no way for us to filter by our own kol/predicate metadata.
+  // bare entity name, matters: a plain entity-name query ranks large
+  // official announcement/report documents (actor: null) ahead of the
+  // shorter named-actor statement memories stateAsOf/diff actually need,
+  // since HydraDB's hybrid search has no way for us to filter by our own
+  // actor/predicate metadata.
   const memories = await queryMemories(
-    `${entityName} doctor physician KOL reaction sentiment opinion statement`,
+    `${entityName} executive regulator testimony statement allegation finding`,
     { maxResults: 50 },
   );
-  const stateA = stateAsOf(memories, dateA);
-  const stateB = stateAsOf(memories, dateB);
+
+  // This corpus is historical (2003-2017) — a memory whose date fell back
+  // to today's ingestion timestamp (no real date found in the source) would
+  // badly corrupt a chronological comparison, unlike the live-news case
+  // this fallback was originally designed for. Exclude it here rather than
+  // silently trusting an unreliable date.
+  const dated = memories.filter((m) => m.meta.date_confidence !== "crawl_fallback");
+
+  const stateA = stateAsOf(dated, dateA);
+  const stateB = stateAsOf(dated, dateB);
   const shifts = diff(stateA, stateB);
 
   const narrative = await narrateCompare({ entity: entityName, dateA, dateB, shifts });
@@ -42,5 +51,5 @@ export async function GET(req: NextRequest) {
     ),
   ];
 
-  return Response.json({ entity: entityName, dateA, dateB, narrative, kol_shifts: shifts, citations });
+  return Response.json({ entity: entityName, dateA, dateB, narrative, shifts, citations });
 }

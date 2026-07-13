@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const relatedKolRelations = candidates.filter(
+  const relatedActorStatements = candidates.filter(
     (m) => m.meta.predicate !== "captured_content" && m.meta.hydra_doc_source === url,
   );
 
@@ -77,8 +77,8 @@ export async function GET(req: NextRequest) {
     source_title: archived.meta.source_title,
     status,
     live_diff_summary: liveDiffSummary,
-    related_kol_relations: relatedKolRelations.map((m) => ({
-      kol: m.meta.kol,
+    related_actor_statements: relatedActorStatements.map((m) => ({
+      actor: m.meta.actor,
       entity: m.meta.entity,
       predicate: m.meta.predicate,
       sentiment: m.meta.sentiment,

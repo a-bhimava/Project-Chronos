@@ -1,9 +1,8 @@
 export type Topic = {
   id: string;
-  drug_name: string;
-  brand_name?: string;
-  company: string;
-  class: string;
+  name: string; // e.g. "S&P RMBS/CDO Ratings"
+  org: string; // e.g. "S&P Global (formerly McGraw Hill Financial)"
+  category: string; // e.g. "credit rating settlement"
   queries: string[];
 };
 
@@ -31,8 +30,8 @@ export type DateConfidence = "exact" | "range_midpoint" | "crawl_fallback";
  * plain text back to us.
  */
 export type ChronosMeta = {
-  kol?: string | null; // null for company/spokesperson statements
-  entity: string; // drug/brand name this statement is about
+  actor?: string | null; // a named individual OR an institution (e.g. "DOJ", "S&P"); null only when no identifiable speaker
+  entity: string; // the subject the statement is about (e.g. a ratings methodology, a settlement)
   predicate: Predicate;
   observed_at: string; // ISO 8601 — when the statement was made/published
   date_confidence: DateConfidence;
@@ -44,7 +43,7 @@ export type ChronosMeta = {
   topic_id: string;
   captured_at: string; // ISO 8601 — when WE crawled/ingested it
   content_hash?: string; // sha256 of full captured markdown, for captured_content rows
-  hydra_doc_source?: string; // URL of the captured_content row a kol-statement cites
+  hydra_doc_source?: string; // URL of the captured_content row an actor-statement cites
 };
 
 /** What we build locally before handing text off to HydraDB's memories ingest. */
