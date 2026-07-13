@@ -30,8 +30,11 @@ type CompareResponse = {
 
 export function TimelineCompare({ topics }: { topics: Topic[] }) {
   const [entity, setEntity] = useState(topics[0]?.id ?? "");
+  // dateB defaults to today's date-equivalent in the seeded data range so a
+  // first-click "Compare" covers the real captured KOL activity window
+  // (roughly Feb-Jul 2026 for orforglipron) instead of stopping short of it.
   const [dateA, setDateA] = useState("2026-01-15");
-  const [dateB, setDateB] = useState("2026-05-15");
+  const [dateB, setDateB] = useState("2026-07-13");
   const [result, setResult] = useState<CompareResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

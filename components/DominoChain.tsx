@@ -28,8 +28,15 @@ type DominoResponse = {
 };
 
 export function DominoChain({ topics }: { topics: Topic[] }) {
-  const [entity, setEntity] = useState(topics[0]?.id ?? "");
-  const [windowDays, setWindowDays] = useState(21);
+  // Defaults tuned to what the real seeded data actually supports: the
+  // richest chain found is oral-semaglutide's positive arc, which spans
+  // ~7 months (Dec 2025 -> Jul 2026) — a narrow default window would show
+  // a 1-node "chain" on first try, which undersells the feature.
+  const [entity, setEntity] = useState(
+    topics.find((t) => t.id === "oral-semaglutide")?.id ?? topics[0]?.id ?? "",
+  );
+  const [windowDays, setWindowDays] = useState(180);
+  const [direction, setDirection] = useState<"negative" | "positive">("positive");
   const [result, setResult] = useState<DominoResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +46,7 @@ export function DominoChain({ topics }: { topics: Topic[] }) {
     setError(null);
     setResult(null);
     try {
-      const params = new URLSearchParams({ entity, windowDays: String(windowDays) });
+      const params = new URLSearchParams({ entity, windowDays: String(windowDays), direction });
       const res = await fetch(`/api/query/domino?${params.toString()}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Request failed");
@@ -70,12 +77,27 @@ export function DominoChain({ topics }: { topics: Topic[] }) {
           </Select>
         </div>
         <div className="flex flex-col gap-1.5">
+          <Label htmlFor="domino-direction">Direction</Label>
+          <Select
+            value={direction}
+            onValueChange={(value) => value && setDirection(value as "negative" | "positive")}
+          >
+            <SelectTrigger id="domino-direction" className="w-32">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="positive">Positive</SelectItem>
+              <SelectItem value="negative">Negative</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1.5">
           <Label htmlFor="domino-window">Propagation window (days)</Label>
           <Input
             id="domino-window"
             type="number"
             min={1}
-            max={180}
+            max={400}
             value={windowDays}
             onChange={(e) => setWindowDays(Number(e.target.value))}
             className="w-32"

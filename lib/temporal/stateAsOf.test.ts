@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stateAsOf } from "@/lib/temporal/stateAsOf";
+import { normalizeKolKey } from "@/lib/temporal/parse";
 import { fixture } from "@/lib/temporal/fixtures";
 
 describe("stateAsOf", () => {
@@ -12,8 +13,8 @@ describe("stateAsOf", () => {
 
     const state = stateAsOf(relations, "2026-05-15T00:00:00Z");
     expect(state.size).toBe(1);
-    expect(state.get("Dr. A")?.sentiment).toBe("negative");
-    expect(state.get("Dr. A")?.observed_at).toBe("2026-03-01T00:00:00Z");
+    expect(state.get(normalizeKolKey("Dr. A"))?.sentiment).toBe("negative");
+    expect(state.get(normalizeKolKey("Dr. A"))?.observed_at).toBe("2026-03-01T00:00:00Z");
   });
 
   it("excludes KOLs with no relation before the cutoff", () => {
@@ -39,7 +40,7 @@ describe("stateAsOf", () => {
     ];
     const state = stateAsOf(relations, "2026-12-01T00:00:00Z");
     expect(state.size).toBe(2);
-    expect(state.get("Dr. A")?.sentiment).toBe("positive");
-    expect(state.get("Dr. B")?.sentiment).toBe("negative");
+    expect(state.get(normalizeKolKey("Dr. A"))?.sentiment).toBe("positive");
+    expect(state.get(normalizeKolKey("Dr. B"))?.sentiment).toBe("negative");
   });
 });

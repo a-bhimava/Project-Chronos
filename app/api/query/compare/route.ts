@@ -21,7 +21,15 @@ export async function GET(req: NextRequest) {
   const topic = getTopic(entityId);
   const entityName = topic?.drug_name ?? entityId;
 
-  const memories = await queryMemories(entityName, { maxResults: 50 });
+  // Biasing the query toward individual-statement language, not just the
+  // bare drug name, matters: a plain entity-name query ranks large official
+  // announcement/report documents (kol: null) ahead of the shorter named-KOL
+  // statement memories stateAsOf/diff actually need, since HydraDB's hybrid
+  // search has no way for us to filter by our own kol/predicate metadata.
+  const memories = await queryMemories(
+    `${entityName} doctor physician KOL reaction sentiment opinion statement`,
+    { maxResults: 50 },
+  );
   const stateA = stateAsOf(memories, dateA);
   const stateB = stateAsOf(memories, dateB);
   const shifts = diff(stateA, stateB);

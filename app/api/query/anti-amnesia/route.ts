@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { createHash } from "node:crypto";
 import { queryMemories } from "@/lib/hydra/query";
+import { getDatabase, getHydraClient } from "@/lib/hydra/client";
+import { stripMeta } from "@/lib/temporal/parse";
 import { youComContents } from "@/lib/youcom/contents";
 
 export type LiveStatus = "unchanged" | "changed" | "unreachable_or_deleted";
@@ -30,6 +32,28 @@ export async function GET(req: NextRequest) {
     (m) => m.meta.predicate !== "captured_content" && m.meta.hydra_doc_source === url,
   );
 
+  // HydraDB chunks long text for indexing — for a ~6000-char captured_content
+  // memory, the search chunk we matched on may only be the trailing fragment
+  // that happened to contain the META block, not the full article body.
+  // context.inspect() fetches the complete original source by ID (chunk.id
+  // doubles as the stable source ID across all of a source's chunks) rather
+  // than whatever chunk search ranked highest.
+  let archivedMarkdown = archived.statement;
+  if (archived.chunkId) {
+    try {
+      const inspectRes = await getHydraClient().context.inspect({
+        id: archived.chunkId,
+        tenantId: getDatabase(),
+        mode: "content",
+      });
+      if (inspectRes.data?.content) {
+        archivedMarkdown = stripMeta(inspectRes.data.content);
+      }
+    } catch {
+      // Fall back to the chunk-derived text already in `archived.statement`.
+    }
+  }
+
   let status: LiveStatus = "unreachable_or_deleted";
   let liveDiffSummary: string | undefined;
 
@@ -48,7 +72,7 @@ export async function GET(req: NextRequest) {
 
   return Response.json({
     url,
-    archived_markdown: archived.statement,
+    archived_markdown: archivedMarkdown,
     captured_at: archived.meta.captured_at,
     source_title: archived.meta.source_title,
     status,

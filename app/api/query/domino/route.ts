@@ -22,7 +22,13 @@ export async function GET(req: NextRequest) {
   const topic = getTopic(entityId);
   const entityName = topic?.drug_name ?? entityId;
 
-  const memories = await queryMemories(entityName, { maxResults: 50 });
+  // See compare/route.ts for why this is KOL-biased rather than the bare
+  // entity name — otherwise official announcement content (kol: null)
+  // crowds out the named-individual statements domino() needs.
+  const memories = await queryMemories(
+    `${entityName} doctor physician KOL reaction sentiment opinion statement`,
+    { maxResults: 50 },
+  );
   const chain = domino(memories, windowDays, direction);
 
   const narrative =

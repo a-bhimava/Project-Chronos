@@ -28,9 +28,12 @@ export function diff(
   const allKols = new Set<string>([...stateA.keys(), ...stateB.keys()]);
   const shifts: KolShift[] = [];
 
-  for (const kol of allKols) {
-    const a = stateA.get(kol);
-    const b = stateB.get(kol);
+  for (const key of allKols) {
+    const a = stateA.get(key);
+    const b = stateB.get(key);
+    // Map keys are normalizeKolKey()'d (lowercase, credential-stripped) for
+    // grouping — always display the KolState's own `.kol`, never the key.
+    const kol = (a ?? b)!.kol;
 
     if (!a && b) {
       shifts.push({ kol, kind: "new_mention", stateB: b });

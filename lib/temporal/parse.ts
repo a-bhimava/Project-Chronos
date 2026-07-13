@@ -37,6 +37,18 @@ export function stripMeta(text: string): string {
   return text.replace(META_RE, "").trim();
 }
 
+/**
+ * The same KOL shows up across articles with inconsistent credential
+ * suffixes ("Natalie Bellini, DNP" vs "Natalie Bellini") since extraction
+ * transcribes whatever a given source wrote. Grouping by the raw string
+ * fragments one person's timeline into several. Use this as the grouping
+ * key everywhere a KOL identity matters (stateAsOf, domino) — keep the
+ * display name as-is, just don't key on it directly.
+ */
+export function normalizeKolKey(kol: string): string {
+  return kol.split(",")[0].trim().toLowerCase();
+}
+
 /** Builds the raw text we hand to HydraDB: a natural-language sentence (for
  * its own hybrid/semantic indexing) followed by the delimited META block. */
 export function buildMemoryText(sentence: string, meta: ChronosMeta): string {

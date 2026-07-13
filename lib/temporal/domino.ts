@@ -1,4 +1,5 @@
 import type { ParsedMemory, Sentiment } from "@/lib/types";
+import { normalizeKolKey } from "@/lib/temporal/parse";
 
 export type DominoStep = {
   kol: string;
@@ -36,17 +37,19 @@ export function domino(
       wantedSentiments.includes(m.meta.sentiment),
   );
 
-  // First flip per KOL: earliest matching-sentiment statement.
+  // First flip per KOL: earliest matching-sentiment statement. Keyed by
+  // normalized name so credential-suffix variants ("Dr. X, MD" vs "Dr. X")
+  // collapse to one person instead of fragmenting the chain.
   const firstFlipByKol = new Map<string, ParsedMemory>();
   for (const memory of matching) {
-    const kol = memory.meta.kol;
-    if (!kol) continue;
+    if (!memory.meta.kol) continue;
+    const key = normalizeKolKey(memory.meta.kol);
     const observedAt = new Date(memory.meta.observed_at).getTime();
     if (Number.isNaN(observedAt)) continue;
 
-    const current = firstFlipByKol.get(kol);
+    const current = firstFlipByKol.get(key);
     if (!current || new Date(current.meta.observed_at).getTime() > observedAt) {
-      firstFlipByKol.set(kol, memory);
+      firstFlipByKol.set(key, memory);
     }
   }
 
@@ -57,8 +60,8 @@ export function domino(
 
   if (sortedEvents.length === 0) return [];
 
-  const toStep = ([kol, memory]: [string, ParsedMemory]): DominoStep => ({
-    kol,
+  const toStep = ([, memory]: [string, ParsedMemory]): DominoStep => ({
+    kol: memory.meta.kol!.split(",")[0].trim(),
     observed_at: memory.meta.observed_at,
     sentiment: memory.meta.sentiment ?? "neutral",
     sentiment_score: memory.meta.sentiment_score ?? 0,

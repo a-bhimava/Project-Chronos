@@ -1,4 +1,5 @@
 import type { ParsedMemory, Sentiment } from "@/lib/types";
+import { normalizeKolKey } from "@/lib/temporal/parse";
 
 export type KolState = {
   kol: string;
@@ -26,22 +27,22 @@ export function stateAsOf(
 
   for (const memory of memories) {
     if (memory.meta.predicate === "captured_content") continue;
-    const kol = memory.meta.kol;
-    if (!kol) continue;
+    if (!memory.meta.kol) continue;
+    const key = normalizeKolKey(memory.meta.kol);
 
     const observedAt = new Date(memory.meta.observed_at).getTime();
     if (Number.isNaN(observedAt) || observedAt > cutoff) continue;
 
-    const current = latestByKol.get(kol);
+    const current = latestByKol.get(key);
     if (!current || new Date(current.meta.observed_at).getTime() < observedAt) {
-      latestByKol.set(kol, memory);
+      latestByKol.set(key, memory);
     }
   }
 
   const result = new Map<string, KolState>();
-  for (const [kol, memory] of latestByKol) {
-    result.set(kol, {
-      kol,
+  for (const [key, memory] of latestByKol) {
+    result.set(key, {
+      kol: memory.meta.kol!.split(",")[0].trim(),
       entity: memory.meta.entity,
       predicate: memory.meta.predicate,
       sentiment: memory.meta.sentiment ?? "neutral",
