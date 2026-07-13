@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import type { ViewId } from "@/components/ViewSwitcher";
 import { FadeSwitch } from "@/components/FadeSwitch";
@@ -11,6 +12,22 @@ import { ChainReactionView } from "@/components/views/ChainReactionView";
 import { KeyFindingsView } from "@/components/views/KeyFindingsView";
 import { SourcesView } from "@/components/views/SourcesView";
 import { topics } from "@/lib/topics";
+import type { Topic } from "@/lib/types";
+
+// The views default to the first topic in the list, so putting the best
+// match for the landing-page query first pre-selects it everywhere.
+function orderTopicsByQuery(query: string): Topic[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return topics;
+  const match = topics.find((t) =>
+    [t.id, t.name, t.org, t.category].some(
+      (field) =>
+        q.includes(field.toLowerCase()) || field.toLowerCase().includes(q),
+    ),
+  );
+  if (!match) return topics;
+  return [match, ...topics.filter((t) => t.id !== match.id)];
+}
 
 const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
   timeline: {
@@ -35,7 +52,9 @@ const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
   },
 };
 
-export default function AnalysisPage() {
+function AnalysisContent() {
+  const searchParams = useSearchParams();
+  const orderedTopics = orderTopicsByQuery(searchParams.get("q") ?? "");
   const [view, setView] = useState<ViewId>("timeline");
   const meta = VIEW_TITLES[view];
 
@@ -53,13 +72,22 @@ export default function AnalysisPage() {
 
           <FadeSwitch id={view}>
             {view === "timeline" && <TimelineView />}
-            {view === "compare" && <ComparePeriodsView topics={topics} />}
-            {view === "chain" && <ChainReactionView topics={topics} />}
+            {view === "compare" && <ComparePeriodsView topics={orderedTopics} />}
+            {view === "chain" && <ChainReactionView topics={orderedTopics} />}
             {view === "findings" && <KeyFindingsView />}
             {view === "sources" && <SourcesView />}
           </FadeSwitch>
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AnalysisPage() {
+  // useSearchParams requires a Suspense boundary on statically rendered routes.
+  return (
+    <Suspense>
+      <AnalysisContent />
+    </Suspense>
   );
 }
