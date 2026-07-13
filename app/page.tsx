@@ -1,46 +1,91 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { TimelineCompare } from "@/components/TimelineCompare";
-import { AntiAmnesia } from "@/components/AntiAmnesia";
-import { DominoChain } from "@/components/DominoChain";
-import { topics } from "@/lib/topics";
+"use client";
 
-// Pre-seeded example URLs for the anti-amnesia demo, so it never depends on
-// live typing during a demo. Update after running `npm run seed` with real
-// captured URLs from your topics.
-const EXAMPLE_URLS: string[] = [];
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Cinzel } from "next/font/google";
+import { ArrowLeftRight, ArrowRight, Archive, Network } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["600", "700"] });
+
+const FEATURES = [
+  { icon: ArrowLeftRight, label: "Compare timelines" },
+  { icon: Network, label: "Trace opinion cascades" },
+  { icon: Archive, label: "Recover erased pages" },
+];
 
 export default function Home() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function analyze(q: string) {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    router.push(`/analysis?q=${encodeURIComponent(trimmed)}`);
+  }
+
   return (
-    <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-6 py-10">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Project Chronos</h1>
-        <p className="text-sm text-muted-foreground">
-          Timeline-based competitive intelligence for pharma — live web capture
-          (You.com) + bitemporal graph memory (HydraDB).
-        </p>
+    <main className="flex min-h-screen flex-col bg-gradient-to-b from-background via-background to-muted/50">
+      <header className="flex items-center justify-center gap-6 border-b border-border/60 px-6 py-4 text-xs text-muted-foreground sm:gap-10">
+        {FEATURES.map(({ icon: Icon, label }, i) => (
+          <span key={label} className="flex items-center gap-6 sm:gap-10">
+            <span className="flex items-center gap-2">
+              <Icon className="size-4" />
+              <span className="font-medium tracking-wide">{label}</span>
+            </span>
+            {i < FEATURES.length - 1 && (
+              <span aria-hidden className="text-border">
+                ◆
+              </span>
+            )}
+          </span>
+        ))}
       </header>
 
-      <Tabs defaultValue="compare">
-        <TabsList>
-          <TabsTrigger value="compare">Timeline compare</TabsTrigger>
-          <TabsTrigger value="domino">Domino effect</TabsTrigger>
-          <TabsTrigger value="anti-amnesia">Anti-amnesia</TabsTrigger>
-        </TabsList>
-        <TabsContent value="compare" className="pt-6">
-          <TimelineCompare topics={topics} />
-        </TabsContent>
-        <TabsContent value="domino" className="pt-6">
-          <DominoChain topics={topics} />
-        </TabsContent>
-        <TabsContent value="anti-amnesia" className="pt-6">
-          <AntiAmnesia exampleUrls={EXAMPLE_URLS} />
-        </TabsContent>
-      </Tabs>
-    </div>
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-10 px-6 pb-24">
+        <div className="flex flex-col items-center gap-5 text-center">
+          <span className="text-sm font-medium tracking-[0.5em] text-muted-foreground">
+            ΧΡΟΝΟΣ
+          </span>
+          <h1
+            className={`${cinzel.className} text-7xl font-bold uppercase tracking-[0.12em] sm:text-8xl`}
+          >
+            Chronos
+          </h1>
+          <div className="flex items-center gap-4 text-muted-foreground">
+            <span className="h-px w-16 bg-border" />
+            <p className="text-lg">
+              Time-travel through expert opinion, on any topic.
+            </p>
+            <span className="h-px w-16 bg-border" />
+          </div>
+        </div>
+
+        <form
+          className="flex w-full max-w-2xl flex-col items-center gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            analyze(query);
+          }}
+        >
+          <Input
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Track expert opinion on any subject..."
+            className="h-20 w-full rounded-2xl border-2 bg-card px-7 !text-xl shadow-lg"
+          />
+          <Button
+            type="submit"
+            size="lg"
+            className="h-14 rounded-xl px-10 text-lg"
+          >
+            Analyze
+            <ArrowRight className="ml-2 size-5" />
+          </Button>
+        </form>
+      </div>
+    </main>
   );
 }

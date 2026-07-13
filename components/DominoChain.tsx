@@ -55,7 +55,7 @@ export function DominoChain({ topics }: { topics: Topic[] }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="domino-entity">Drug</Label>
+          <Label htmlFor="domino-entity">Subject</Label>
           <Select value={entity} onValueChange={(value) => value && setEntity(value)}>
             <SelectTrigger id="domino-entity" className="w-56">
               <SelectValue />

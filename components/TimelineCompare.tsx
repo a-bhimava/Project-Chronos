@@ -57,7 +57,7 @@ export function TimelineCompare({ topics }: { topics: Topic[] }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="compare-entity">Drug</Label>
+          <Label htmlFor="compare-entity">Subject</Label>
           <Select value={entity} onValueChange={(value) => value && setEntity(value)}>
             <SelectTrigger id="compare-entity" className="w-56">
               <SelectValue />
