@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Clock, LayoutDashboard, GitCompare, Zap, BarChart3, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ViewId } from "@/components/ViewSwitcher";
@@ -21,7 +22,7 @@ export function Sidebar({
 }) {
   return (
     <aside className="flex w-60 shrink-0 flex-col gap-6 border-r bg-card px-4 py-6">
-      <div className="flex items-center gap-2 px-2">
+      <Link href="/" className="flex items-center gap-2 rounded-md px-2 transition-opacity hover:opacity-80">
         <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
           <Clock className="h-4 w-4" />
         </span>
@@ -29,7 +30,7 @@ export function Sidebar({
           <span className="text-sm font-semibold">Chronos</span>
           <span className="text-[11px] text-muted-foreground">Market Intelligence</span>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex flex-col gap-1 px-2 text-sm">
         {NAV.map(({ id, label, icon: Icon }) => (
