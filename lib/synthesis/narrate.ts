@@ -1,11 +1,13 @@
 import { generateText } from "ai";
+import { google } from "@ai-sdk/google";
 import type { KolShift } from "@/lib/temporal/diff";
 import type { DominoStep } from "@/lib/temporal/domino";
 
+// Called directly against Google's Generative AI API (see extract.ts for
+// why — Vercel AI Gateway is blocked pending a credit card on the account).
 // Stronger, judge-facing model — a small number of calls per user request
-// (not per document), quality matters more than throughput here. Confirmed
-// live on the Vercel AI Gateway's /v1/models list.
-const SYNTHESIS_MODEL = "anthropic/claude-sonnet-5";
+// (not per document), quality matters more than throughput here.
+const SYNTHESIS_MODEL = google("gemini-2.5-pro");
 
 const SYNTH_SYSTEM = `You are answering a pharma competitive-intelligence
 question using ONLY the timeline data provided below (KOL statements with

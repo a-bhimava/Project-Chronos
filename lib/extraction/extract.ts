@@ -1,12 +1,15 @@
 import { generateObject } from "ai";
+import { google } from "@ai-sdk/google";
 import { ExtractionSchema, type Extraction } from "@/lib/extraction/schema";
 import type { Topic } from "@/lib/types";
 
-// Mid-tier, cost-sensitive model: this runs dozens of times during bulk
-// seeding. Reserve a stronger model (see lib/synthesis/narrate.ts) for the
-// small number of judge-facing narrative calls. Confirmed live on the
-// Vercel AI Gateway's /v1/models list — do not change without re-checking.
-const EXTRACTION_MODEL = "anthropic/claude-haiku-4.5";
+// Called directly against Google's Generative AI API (GOOGLE_GENERATIVE_AI_API_KEY),
+// bypassing the Vercel AI Gateway — the Gateway requires a credit card on
+// file even for free credits, which blocked this account. Fast/cheap model:
+// this runs dozens of times during bulk seeding. Reserve a stronger model
+// (see lib/synthesis/narrate.ts) for the small number of judge-facing
+// narrative calls. Confirmed accessible via this API key's /v1beta/models.
+const EXTRACTION_MODEL = google("gemini-2.5-flash");
 
 const MAX_INPUT_CHARS = 20000;
 

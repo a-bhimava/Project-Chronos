@@ -8,6 +8,14 @@ export type ObservedAtResolution = {
   date_confidence: DateConfidence;
 };
 
+const MAX_STATEMENT_CHARS = 500;
+
+/** Truncates on our side rather than constraining the model's schema (see schema.ts). */
+function truncateStatement(text: string): string {
+  if (text.length <= MAX_STATEMENT_CHARS) return text;
+  return `${text.slice(0, MAX_STATEMENT_CHARS - 1).trimEnd()}…`;
+}
+
 /**
  * Our own observed_at resolution (never HydraDB's — it has no concept of
  * this): prefer the date the extraction found stated in the document text,
@@ -75,6 +83,7 @@ export function buildRelationMemories(opts: {
   capturedAt: string;
 }): ChronosMemory[] {
   return opts.relations.map((relation) => {
+    const statementText = truncateStatement(relation.statement_text);
     const meta: ChronosMeta = {
       kol: relation.kol,
       entity: relation.entity,
@@ -83,7 +92,7 @@ export function buildRelationMemories(opts: {
       date_confidence: opts.observed.date_confidence,
       sentiment: relation.sentiment,
       sentiment_score: relation.sentiment_score,
-      statement_text: relation.statement_text,
+      statement_text: statementText,
       source_url: opts.sourceUrl,
       source_title: opts.sourceTitle,
       topic_id: opts.topic.id,
@@ -92,7 +101,7 @@ export function buildRelationMemories(opts: {
     };
 
     const who = relation.kol ?? `${opts.topic.company} (official)`;
-    const sentence = `${who} ${relation.predicate.replace(/_/g, " ")} ${relation.entity}: "${relation.statement_text}"`;
+    const sentence = `${who} ${relation.predicate.replace(/_/g, " ")} ${relation.entity}: "${statementText}"`;
 
     return { text: buildMemoryText(sentence, meta), meta };
   });

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.12",
+    "@ai-sdk/google": "^4.0.14",
     "@base-ui/react": "^1.6.0",
     "@hydradb/sdk": "^2.1.0",
     "ai": "^7.0.23",
