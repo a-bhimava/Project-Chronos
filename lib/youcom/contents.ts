@@ -48,6 +48,11 @@ export async function youComContents(
       crawl_timeout: options.crawl_timeout ?? 15,
       ...(options.max_age !== undefined ? { max_age: options.max_age } : {}),
     }),
+    // crawl_timeout above is a request param the API may or may not enforce
+    // server-side; this is our own client-side deadline so a stalled
+    // connection can't hang the ingestion pipeline indefinitely (see
+    // search.ts for the incident that motivated this).
+    signal: AbortSignal.timeout(45_000),
   });
 
   if (!res.ok) {

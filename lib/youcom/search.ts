@@ -66,6 +66,11 @@ export async function youComSearch(
 
   const res = await fetch(`${SEARCH_URL}?${params.toString()}`, {
     headers: { "X-API-Key": apiKey },
+    // Without a client-side deadline, a stalled connection to a third-party
+    // API hangs the whole ingestion pipeline indefinitely (hit this for
+    // real during seeding — a request sat open with near-zero CPU for 20+
+    // minutes with no error and no data).
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!res.ok) {

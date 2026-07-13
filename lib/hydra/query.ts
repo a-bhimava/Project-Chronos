@@ -21,13 +21,17 @@ export async function queryMemories(
   const client = getHydraClient();
   const database = getDatabase();
 
+  // The real API hard-rejects (400 INVALID_INPUT) anything outside 1-50 —
+  // clamp here so a caller's mistake can't blow up the whole request.
+  const maxResults = Math.min(50, Math.max(1, options.maxResults ?? 50));
+
   const res = await client.query({
     query,
     database,
     type: "memory",
     queryBy: options.queryBy ?? "hybrid",
     graphContext: options.graphContext ?? true,
-    maxResults: options.maxResults ?? 50,
+    maxResults,
   });
 
   const chunks = res.data?.chunks ?? [];

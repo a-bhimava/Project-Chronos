@@ -12,6 +12,22 @@ config({ path: ".env.local" });
 import { topics } from "@/lib/topics";
 import { runIngestForQuery } from "@/lib/ingestion";
 
+// Per-query wall-clock cap. runIngestForQuery already has timeouts on its
+// individual network/LLM calls, but this is defense in depth: a single
+// hung query (we hit exactly this once — a stalled connection with no
+// error and no data for 20+ minutes) must never be able to block the rest
+// of the seed run.
+const QUERY_TIMEOUT_MS = 120_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Query timed out after ${ms}ms`)), ms),
+    ),
+  ]);
+}
+
 async function main() {
   const freshness = process.env.SEED_FRESHNESS; // e.g. "2025-01-01to2026-07-01" for a historical backfill
   let totalIngested = 0;
@@ -21,7 +37,10 @@ async function main() {
     for (const query of topic.queries) {
       process.stdout.write(`  "${query}" ... `);
       try {
-        const result = await runIngestForQuery(query, topic, { freshness });
+        const result = await withTimeout(
+          runIngestForQuery(query, topic, { freshness }),
+          QUERY_TIMEOUT_MS,
+        );
         totalIngested += result.memoriesIngested;
         console.log(
           `${result.urlsFound} found, ${result.urlsCrawled} crawled, ${result.memoriesIngested} memories ingested`,

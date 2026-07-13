@@ -37,6 +37,7 @@ export async function extractRelations(
     schema: ExtractionSchema,
     system: systemPrompt(topic),
     prompt: rawMarkdown.slice(0, MAX_INPUT_CHARS),
+    abortSignal: AbortSignal.timeout(45_000),
   });
   return object;
 }

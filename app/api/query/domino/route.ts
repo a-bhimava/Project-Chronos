@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   const topic = getTopic(entityId);
   const entityName = topic?.drug_name ?? entityId;
 
-  const memories = await queryMemories(entityName, { maxResults: 100 });
+  const memories = await queryMemories(entityName, { maxResults: 50 });
   const chain = domino(memories, windowDays, direction);
 
   const narrative =

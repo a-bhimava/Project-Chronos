@@ -40,7 +40,12 @@ ${lines.join("\n")}
 
 Write a short narrative (3-6 sentences) describing how sentiment shifted, calling out the most notable individual shifts with citations.`;
 
-  const { text } = await generateText({ model: SYNTHESIS_MODEL, system: SYNTH_SYSTEM, prompt });
+  const { text } = await generateText({
+    model: SYNTHESIS_MODEL,
+    system: SYNTH_SYSTEM,
+    prompt,
+    abortSignal: AbortSignal.timeout(30_000),
+  });
   return text;
 }
 
@@ -62,6 +67,11 @@ ${lines.join("\n")}
 
 Write a short narrative (3-6 sentences) describing this as a chain reaction — who moved first, and how it appears to have propagated to the others — with citations.`;
 
-  const { text } = await generateText({ model: SYNTHESIS_MODEL, system: SYNTH_SYSTEM, prompt });
+  const { text } = await generateText({
+    model: SYNTHESIS_MODEL,
+    system: SYNTH_SYSTEM,
+    prompt,
+    abortSignal: AbortSignal.timeout(30_000),
+  });
   return text;
 }
