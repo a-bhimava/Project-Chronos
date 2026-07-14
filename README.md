@@ -12,6 +12,22 @@ An AI agent that captures market research into a persistent memory — building 
 
 Product, compliance, and BD teams in fast-moving industries need to track regulation and competitor moves constantly. Today this means manually monitoring scattered news and reports, and that research vanishes — the next person (or the same person, months later) starts from zero. Nothing compounds, and no one can quickly answer "are we behind, and why?"
 
+## Competitive landscape
+
+- **Codex Finance (OpenAI)** — automates modeling/QA via finance plugins, but is task-based and session-based with no shared memory linking regulation → competitor → product gap. Chronos persists findings into a shared graph that compounds across sessions and across the team.
+- **Perplexity Finance** — real-time stock research for individual investors, one query at a time, no concept of the user's own product. Chronos maintains a self-node so every signal is checked against the company's actual capabilities.
+- **Bloomberg Terminal** — the market's pricing/trading/news system, built for market participation, not product strategy. Chronos doesn't compete on market data — it fills the adjacent gap of linking regulatory/competitive events to product feature impact.
+- **AlphaSense (closest competitor)** — Gartner-named leader in Competitive & Market Intelligence via AI document search, but still a search-deeper tool, not a remember-forever one, with no self-node and enterprise pricing. Chronos's graph retains relationships permanently and compares directly against the user's own product, scoped for individual product teams.
+- **Hebbia** — enterprise document AI for deal teams, diligence-workflow focused, GenAI for investment banks/PE execution. Chronos is built for continuous regulation-to-competitor tracking for product/compliance/BD teams inside operating companies — a different buyer entirely.
+
+**Summary:** every listed tool answers a question when asked. None of them remember the answer, connect it to the user's own product, and surface the same answer to the next person on the team — that gap is what Chronos closes.
+
+## Tools used
+
+- **You.com** — real-time, citation-backed web research (the "eyes")
+- **HydraDB** — compounding relationship-graph memory (the "memory"); benchmarked against a flat/baseline store to demonstrate retrieval speed and relationship retention
+
+
 ## Solution
 
 Chronos is an agent built from two parts:
@@ -33,20 +49,6 @@ Product managers, compliance officers, and BD/partnerships teams inside operatin
 - **Pricing & fee benchmarking** — a shared, continuously updated view of competitor pricing so product, sales, and finance stop arguing over whose spreadsheet is right.
 - **Merchant/partner outreach intelligence** — a shared graph of who's already served by whom, preventing duplicate BD outreach and surviving employee turnover.
 
-## Competitive landscape
-
-- **Codex Finance (OpenAI)** — automates modeling/QA via finance plugins, but is task-based and session-based with no shared memory linking regulation → competitor → product gap. Chronos persists findings into a shared graph that compounds across sessions and across the team.
-- **Perplexity Finance** — real-time stock research for individual investors, one query at a time, no concept of the user's own product. Chronos maintains a self-node so every signal is checked against the company's actual capabilities.
-- **Bloomberg Terminal** — the market's pricing/trading/news system, built for market participation, not product strategy. Chronos doesn't compete on market data — it fills the adjacent gap of linking regulatory/competitive events to product feature impact.
-- **AlphaSense (closest competitor)** — Gartner-named leader in Competitive & Market Intelligence via AI document search, but still a search-deeper tool, not a remember-forever one, with no self-node and enterprise pricing. Chronos's graph retains relationships permanently and compares directly against the user's own product, scoped for individual product teams.
-- **Hebbia** — enterprise document AI for deal teams, diligence-workflow focused, GenAI for investment banks/PE execution. Chronos is built for continuous regulation-to-competitor tracking for product/compliance/BD teams inside operating companies — a different buyer entirely.
-
-**Summary:** every listed tool answers a question when asked. None of them remember the answer, connect it to the user's own product, and surface the same answer to the next person on the team — that gap is what Chronos closes.
-
-## Tools used
-
-- **You.com** — real-time, citation-backed web research (the "eyes")
-- **HydraDB** — compounding relationship-graph memory (the "memory"); benchmarked against a flat/baseline store to demonstrate retrieval speed and relationship retention
 
 ## Getting started
 
