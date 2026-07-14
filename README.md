@@ -50,6 +50,8 @@ Product managers, compliance officers, and BD/partnerships teams inside operatin
 - **Merchant/partner outreach intelligence** — a shared graph of who's already served by whom, preventing duplicate BD outreach and surviving employee turnover.
 
 
+
+
 ## Getting started
 
 ```bash
@@ -82,7 +84,7 @@ Track 1 (AI SaaS Startup — B2B Tools) and Track 4 (Vertical AI — Financial S
 Aditya Teja Bhimavarapu
 Himakar Yanamandra
 Ashwin Swaminathan
-Nikhil Mediramettla
+Nikhil Mederametla
 
 Carnegie Mellon University
 
