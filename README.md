@@ -1,5 +1,9 @@
 # Chronos (You.com + HydraDB)
 
+- Demo video: https://youtu.be/Gl1oKczNmaE
+- App: https://chronos-app-three.vercel.app
+- GitHub: https://github.com/a-bhimava/Project-Chronos
+
 An AI agent that captures market research into a persistent memory — building a knowledge base tailored to your company's needs, that stays and strengthens with every future use.
 
 ![Project Chronos — Data Flow & Architecture](docs/architecture.jpeg)
@@ -73,11 +77,11 @@ Run the temporal-engine unit tests with `npm run test`.
 Track 1 (AI SaaS Startup — B2B Tools) and Track 4 (Vertical AI — Financial Services)
 
 ## Team
+Aditya Teja Bhimavarapu
+Himakar Yanamandra
+Ashwin Swaminathan
+Nikhil Mediramettla
 
-[add team members]
+Carnegie Mellon University
 
 ## Links
-
-- Demo video: [add link]
-- App: [add link]
-- GitHub: [add link]
