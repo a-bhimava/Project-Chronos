@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-export type ViewId = "timeline" | "compare" | "chain" | "findings" | "sources";
+export type ViewId = "timeline" | "compare" | "chain" | "findings" | "sources" | "graph";
 
 const VIEWS: { id: ViewId; label: string }[] = [
   { id: "timeline", label: "Timeline" },
@@ -10,6 +10,7 @@ const VIEWS: { id: ViewId; label: string }[] = [
   { id: "chain", label: "Chain Reaction" },
   { id: "findings", label: "Key Findings" },
   { id: "sources", label: "Sources" },
+  { id: "graph", label: "Graph Explorer" },
 ];
 
 export function ViewSwitcher({

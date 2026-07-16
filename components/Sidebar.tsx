@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, LayoutDashboard, GitCompare, Zap, BarChart3, FolderOpen } from "lucide-react";
+import { Clock, LayoutDashboard, GitCompare, Zap, BarChart3, FolderOpen, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ViewId } from "@/components/ViewSwitcher";
 
@@ -10,6 +10,7 @@ const NAV: { id: ViewId; label: string; icon: React.ComponentType<{ className?: 
   { id: "chain", label: "Chain Reaction", icon: Zap },
   { id: "findings", label: "Key Findings", icon: BarChart3 },
   { id: "sources", label: "Sources", icon: FolderOpen },
+  { id: "graph", label: "Graph Explorer", icon: Share2 },
 ];
 
 export function Sidebar({

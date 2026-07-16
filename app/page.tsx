@@ -10,6 +10,7 @@ import { ComparePeriodsView } from "@/components/views/ComparePeriodsView";
 import { ChainReactionView } from "@/components/views/ChainReactionView";
 import { KeyFindingsView } from "@/components/views/KeyFindingsView";
 import { SourcesView } from "@/components/views/SourcesView";
+import { GraphExplorerView } from "@/components/views/GraphExplorerView";
 import { topics } from "@/lib/topics";
 
 const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
@@ -32,6 +33,10 @@ const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
   sources: {
     title: "Sources",
     description: "Every document ingested, with an archived, verifiable capture.",
+  },
+  graph: {
+    title: "Graph Explorer",
+    description: "The entity/relationship graph HydraDB extracted automatically from the corpus.",
   },
 };
 
@@ -57,6 +62,7 @@ export default function Home() {
             {view === "chain" && <ChainReactionView topics={topics} />}
             {view === "findings" && <KeyFindingsView />}
             {view === "sources" && <SourcesView />}
+            {view === "graph" && <GraphExplorerView />}
           </FadeSwitch>
         </div>
       </main>
