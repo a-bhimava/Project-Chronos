@@ -12,6 +12,7 @@ import { KeyFindingsView } from "@/components/views/KeyFindingsView";
 import { SourcesView } from "@/components/views/SourcesView";
 import { GraphExplorerView } from "@/components/views/GraphExplorerView";
 import { topics } from "@/lib/topics";
+import { TenantContext } from "@/components/TenantContext";
 
 const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
   timeline: {
@@ -42,30 +43,33 @@ const VIEW_TITLES: Record<ViewId, { title: string; description: string }> = {
 
 export default function Home() {
   const [view, setView] = useState<ViewId>("timeline");
+  const [tenantId, setTenantId] = useState<string | undefined>(undefined);
   const meta = VIEW_TITLES[view];
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar active={view} onChange={setView} />
-      <main className="flex-1 overflow-x-hidden">
-        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-8 py-8">
-          <header className="flex flex-col gap-1">
-            <h1 className="text-xl font-semibold tracking-tight">{meta.title}</h1>
-            <p className="text-sm text-muted-foreground">{meta.description}</p>
-          </header>
+    <TenantContext.Provider value={{ tenantId, setTenantId }}>
+      <div className="flex min-h-screen">
+        <Sidebar active={view} onChange={setView} />
+        <main className="flex-1 overflow-x-hidden">
+          <div className="mx-auto flex max-w-5xl flex-col gap-6 px-8 py-8">
+            <header className="flex flex-col gap-1">
+              <h1 className="text-xl font-semibold tracking-tight">{meta.title}</h1>
+              <p className="text-sm text-muted-foreground">{meta.description}</p>
+            </header>
 
-          {view === "timeline" && <ChatPanel />}
+            {view === "timeline" && <ChatPanel />}
 
-          <FadeSwitch id={view}>
-            {view === "timeline" && <TimelineView />}
-            {view === "compare" && <ComparePeriodsView topics={topics} />}
-            {view === "chain" && <ChainReactionView topics={topics} />}
-            {view === "findings" && <KeyFindingsView />}
-            {view === "sources" && <SourcesView />}
-            {view === "graph" && <GraphExplorerView />}
-          </FadeSwitch>
-        </div>
-      </main>
-    </div>
+            <FadeSwitch id={view}>
+              {view === "timeline" && <TimelineView />}
+              {view === "compare" && <ComparePeriodsView topics={topics} />}
+              {view === "chain" && <ChainReactionView topics={topics} />}
+              {view === "findings" && <KeyFindingsView />}
+              {view === "sources" && <SourcesView />}
+              {view === "graph" && <GraphExplorerView />}
+            </FadeSwitch>
+          </div>
+        </main>
+      </div>
+    </TenantContext.Provider>
   );
 }

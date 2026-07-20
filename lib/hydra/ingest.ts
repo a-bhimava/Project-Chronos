@@ -15,11 +15,14 @@ export type IngestResult = {
  * ourselves on the way out (lib/temporal/parse.ts#parseMemoryText) — we
  * never depend on HydraDB preserving or returning anything beyond the text.
  */
-export async function ingestMemories(memories: ChronosMemory[]): Promise<IngestResult> {
+export async function ingestMemories(
+  memories: ChronosMemory[],
+  options?: { tenantId?: string }
+): Promise<IngestResult> {
   if (memories.length === 0) return { successCount: 0, failedCount: 0 };
 
   const client = getHydraClient();
-  const database = getDatabase();
+  const database = getDatabase(options?.tenantId);
 
   const res = await client.context.ingest({
     tenantId: database,

@@ -25,7 +25,7 @@ export type IngestQueryResult = {
 export async function runIngestForQuery(
   query: string,
   topic: Topic,
-  options: { freshness?: string; count?: number } = {},
+  options: { freshness?: string; count?: number; tenantId?: string } = {},
 ): Promise<IngestQueryResult> {
   const capturedAt = new Date().toISOString();
 
@@ -91,7 +91,7 @@ export async function runIngestForQuery(
       console.error(`extraction failed for ${content.url}:`, err);
     }
 
-    const result = await ingestMemories([capturedMemory, ...relationMemories]);
+    const result = await ingestMemories([capturedMemory, ...relationMemories], { tenantId: options.tenantId });
     memoriesIngested += result.successCount;
   }
 

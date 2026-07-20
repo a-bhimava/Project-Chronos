@@ -64,7 +64,9 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "question is required" }, { status: 400 });
   }
 
-  const memories = await queryMemories(question, { maxResults: 25 });
+  const tenantId = req.headers.get("x-tenant-id") || undefined;
+
+  const memories = await queryMemories(question, { maxResults: 25, tenantId });
   const dated = memories.filter((m) => m.meta.predicate !== "captured_content");
 
   if (dated.length === 0) {

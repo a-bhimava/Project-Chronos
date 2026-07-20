@@ -6,6 +6,7 @@ export type QueryOptions = {
   maxResults?: number;
   queryBy?: "hybrid" | "text";
   graphContext?: boolean;
+  tenantId?: string;
 };
 
 /**
@@ -19,7 +20,7 @@ export async function queryMemories(
   options: QueryOptions = {},
 ): Promise<ParsedMemory[]> {
   const client = getHydraClient();
-  const database = getDatabase();
+  const database = getDatabase(options.tenantId);
 
   // The real API hard-rejects (400 INVALID_INPUT) anything outside 1-50 —
   // clamp here so a caller's mistake can't blow up the whole request.

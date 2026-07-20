@@ -18,7 +18,8 @@ export function getHydraClient(): HydraDBClient {
  * The HydraDB database (v2 canonical name; "tenant" in older/context
  * endpoints, which still require the field literally named tenantId).
  */
-export function getDatabase(): string {
+export function getDatabase(tenantId?: string): string {
+  if (tenantId) return tenantId;
   const database = process.env.HYDRA_DB_DATABASE;
   if (!database) {
     throw new Error(

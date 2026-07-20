@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: `Unknown topicId: ${topicId}` }, { status: 404 });
   }
 
-  const result = await runIngestForQuery(query, topic, { freshness });
+  const tenantId = req.headers.get("x-tenant-id") || undefined;
+  const result = await runIngestForQuery(query, topic, { freshness, tenantId });
   return Response.json(result);
 }

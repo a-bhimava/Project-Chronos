@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CitationList } from "@/components/Citation";
 import { Sparkles } from "lucide-react";
+import { useTenant } from "@/components/TenantContext";
 
 const EXAMPLES = [
   "What did the DOJ allege about S&P's ratings?",
@@ -19,6 +20,7 @@ export function ChatPanel() {
   const [citations, setCitations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { tenantId } = useTenant();
 
   async function ask(q: string) {
     if (!q.trim()) return;
@@ -28,7 +30,10 @@ export function ChatPanel() {
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(tenantId ? { "x-tenant-id": tenantId } : {})
+        },
         body: JSON.stringify({ question: q }),
       });
       const data = await res.json();
