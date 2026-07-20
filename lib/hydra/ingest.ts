@@ -25,9 +25,9 @@ export async function ingestMemories(
   const database = getDatabase(options?.tenantId);
 
   // HydraDB enforces a 1000-token per-request budget. Large crawled pages
-  // easily exceed this when batched. Chunking to 3 memories per request keeps
-  // us safely within budget while still amortising round-trip overhead.
-  const CHUNK_SIZE = 3;
+  // can individually exceed this, so we send one memory at a time to
+  // guarantee we never exceed the limit on a batch.
+  const CHUNK_SIZE = 1;
   let successCount = 0;
   let failedCount = 0;
 
