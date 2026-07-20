@@ -52,7 +52,7 @@ export function buildCapturedContentMemory(opts: {
   topic: Topic;
   capturedAt: string;
 }): ChronosMemory {
-  const truncated = opts.fullMarkdown.slice(0, 6000);
+  const truncated = opts.fullMarkdown.slice(0, 3000);
   const contentHash = `sha256:${createHash("sha256").update(opts.fullMarkdown).digest("hex")}`;
 
   const meta: ChronosMeta = {
