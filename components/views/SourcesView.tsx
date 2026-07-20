@@ -2,8 +2,10 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useTenant } from "@/components/TenantContext";
 import { SentimentBadge } from "@/components/SentimentBadge";
 import { LiveStatusBadge } from "@/components/LiveStatusBadge";
 import type { SourceEntry } from "@/app/api/sources/route";
@@ -31,13 +33,16 @@ export function SourcesView() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [detail, setDetail] = useState<CaptureDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const { tenantId } = useTenant();
 
   useEffect(() => {
-    fetch("/api/sources")
+    fetch("/api/sources", {
+      headers: tenantId ? { "x-tenant-id": tenantId } : {},
+    })
       .then((res) => res.json())
       .then((data) => setSources(data.sources))
       .catch(() => setError("Failed to load sources."));
-  }, []);
+  }, [tenantId]);
 
   async function toggleExpand(url: string) {
     if (expanded === url) {

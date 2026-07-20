@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { GraphEdge, GraphNode } from "@/app/api/graph/route";
+import { useTenant } from "@/components/TenantContext";
 
 type LaidOutNode = GraphNode & { x: number; y: number; degree: number };
 
@@ -103,16 +104,20 @@ export function GraphExplorerView() {
   const [hoveredEdge, setHoveredEdge] = useState<GraphEdge | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { tenantId } = useTenant();
 
   useEffect(() => {
-    fetch("/api/graph")
+    fetch("/api/graph", {
+      headers: tenantId ? { "x-tenant-id": tenantId } : {}
+    })
       .then((res) => res.json())
       .then((data) => {
+        if (!data.nodes) throw new Error("Invalid response");
         setNodes(data.nodes);
         setEdges(data.edges);
       })
       .catch(() => setError("Failed to load the graph."));
-  }, []);
+  }, [tenantId]);
 
   const laidOut = useMemo(() => (nodes ? layout(nodes, edges) : []), [nodes, edges]);
   const byId = useMemo(() => new Map(laidOut.map((n) => [n.id, n])), [laidOut]);

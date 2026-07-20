@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { queryMemories } from "@/lib/hydra/query";
 import { topics } from "@/lib/topics";
 
@@ -11,10 +12,11 @@ export type SourceEntry = {
 
 /** Lists every archived document capture across all topics — the ingested
  * source corpus ("training" data). */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const tenantId = req.headers.get("x-tenant-id") || undefined;
   const perTopic = await Promise.all(
     topics.map(async (topic) => {
-      const memories = await queryMemories(topic.name, { maxResults: 50 });
+      const memories = await queryMemories(topic.name, { maxResults: 50, tenantId });
       return memories
         .filter((m) => m.meta.predicate === "captured_content")
         .map(

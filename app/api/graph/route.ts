@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { getDatabase, getHydraClient } from "@/lib/hydra/client";
 import { topics } from "@/lib/topics";
 
@@ -43,9 +44,10 @@ type RawTriplet = {
   relation?: RawRelation;
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const client = getHydraClient();
-  const database = getDatabase();
+  const tenantId = req.headers.get("x-tenant-id") || undefined;
+  const database = getDatabase(tenantId);
 
   const perTopic = await Promise.all(
     topics.map((topic) =>
