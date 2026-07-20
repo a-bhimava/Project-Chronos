@@ -24,16 +24,29 @@ export async function ingestMemories(
   const client = getHydraClient();
   const database = getDatabase(options?.tenantId);
 
-  const res = await client.context.ingest({
-    tenantId: database,
-    type: "memory",
-    memories: JSON.stringify(memories.map((m) => ({ text: m.text }))),
-    upsert: "true",
-  });
+  // HydraDB enforces a 1000-token per-request budget. Large crawled pages
+  // easily exceed this when batched. Chunking to 3 memories per request keeps
+  // us safely within budget while still amortising round-trip overhead.
+  const CHUNK_SIZE = 3;
+  let successCount = 0;
+  let failedCount = 0;
 
-  return {
-    successCount: res.data?.successCount ?? 0,
-    failedCount: res.data?.failedCount ?? 0,
-    message: res.data?.message,
-  };
+  for (let i = 0; i < memories.length; i += CHUNK_SIZE) {
+    const chunk = memories.slice(i, i + CHUNK_SIZE);
+    try {
+      const res = await client.context.ingest({
+        tenantId: database,
+        type: "memory",
+        memories: JSON.stringify(chunk.map((m) => ({ text: m.text }))),
+        upsert: "true",
+      });
+      successCount += res.data?.successCount ?? 0;
+      failedCount += res.data?.failedCount ?? 0;
+    } catch (err) {
+      console.error(`ingest chunk ${i}–${i + chunk.length} failed:`, err);
+      failedCount += chunk.length;
+    }
+  }
+
+  return { successCount, failedCount };
 }
